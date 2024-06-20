@@ -32,41 +32,48 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
-  cupertino_icons: ^1.0.2
+  #general
   get: ^4.6.5
-  lottie: ^1.4.2
-  styled_widget: ^0.4.0+3
   context_menus: ^1.0.2
   json_annotation: ^4.8.1
   dio: ^5.2.1
-  path_provider: ^2.1.1
   file_picker: 5.3.1
-  macos_secure_bookmarks: ^0.2.1
   rounded_loading_button_plus: ^3.0.1
   url_launcher: ^6.1.6
   logger: ^1.3.0
-  desktop_drop: ^0.4.3
   package_info_plus: ^4.0.0
   fluent_ui: ^4.4.0
   path: any
   badges: ^3.0.3
   app_links: ^3.4.2
-  uri_to_file: ^0.2.0
-  window_manager: ^0.3.4
   autoscale_tabbarview: ^1.0.2
   share_plus: ^7.1.0
   flutter_form_builder: ^9.1.1
   form_builder_validators: ^10.0.0
-  flutter_foreground_task: ^6.1.2
   open_filex: ^4.3.4
-  tray_manager: ^0.2.1
-  lecle_downloads_path_provider: ^0.0.2+8
   hive: ^2.2.3
-  launch_at_startup: ^0.2.2
   args: ^2.5.0
   toggle_switch: ^2.3.0
+  data_table_2: ^2.5.15
+  #  super_drag_and_drop is failed to build on windwows,wait for ^1.0.0 version
+#  super_drag_and_drop: ^0.8.16
+  #  Android,Linux,macOS,web,Windows
+  desktop_drop: ^0.4.3
+  #  Android,iOS,Linux,macOS,Windows
+  path_provider: ^2.1.1
+  #  Android,iOS
+  flutter_foreground_task: ^6.1.2
+  uri_to_file: ^0.2.0
+  lecle_downloads_path_provider: ^0.0.2+8
+  #  Linux,macOS,Windows
+  tray_manager: ^0.2.1
+  launch_at_startup: ^0.2.2
+  window_manager: ^0.3.4
+  #  macOS
+  macos_secure_bookmarks: ^0.2.1
+  go_router: ^14.2.0
+  flutter_riverpod: ^2.5.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -7,6 +7,7 @@ class AppBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<AppController>(
       () => AppController(),
+      fenix:true
     );
   }
 }

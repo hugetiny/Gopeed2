@@ -27,11 +27,19 @@ import '../controllers/setting_controller.dart';
 const _padding = SizedBox(height: 10);
 final _divider = const Divider().paddingOnly(left: 10, right: 10);
 
-class SettingView extends GetView<SettingController> {
-  const SettingView({Key? key}) : super(key: key);
+class SettingView extends StatelessWidget {
+  late final SettingController controller;
+  SettingView({Key? key}) : super(key: key) {
+    if (Get.isRegistered<SettingController>()) {
+      controller = Get.find<SettingController>();
+    } else {
+      controller = Get.put(SettingController());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    Get.put(SettingController());
     final appController = Get.find<AppController>();
     final downloaderCfg = appController.downloaderConfig;
     final startCfg = appController.startConfig;
@@ -261,7 +269,7 @@ class SettingView extends GetView<SettingController> {
           SizedBox(
             height: 200,
             child: CheckListView(
-              items: allTrackerSubscribeUrls,
+              items: trackerSubscribeUrls,
               checked: btExtConfig.trackerSubscribeUrls,
               onChanged: (value) {
                 btExtConfig.trackerSubscribeUrls = value;

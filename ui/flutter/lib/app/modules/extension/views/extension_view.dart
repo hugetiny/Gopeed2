@@ -24,14 +24,22 @@ import '../../../views/responsive_builder.dart';
 import '../../../views/text_button_loading.dart';
 import '../controllers/extension_controller.dart';
 
-class ExtensionView extends GetView<ExtensionController> {
-  ExtensionView({Key? key}) : super(key: key);
+class ExtensionView extends StatelessWidget {
+  late final ExtensionController controller;
+  ExtensionView({Key? key}) : super(key: key) {
+    if (Get.isRegistered<ExtensionController>()) {
+      controller = Get.find<ExtensionController>();
+    } else {
+      controller = Get.put(ExtensionController());
+    }
+  }
 
   final _installUrlController = TextEditingController();
   final _installBtnController = IconButtonLoadingController();
 
   @override
   Widget build(BuildContext context) {
+    Get.put(ExtensionController());
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

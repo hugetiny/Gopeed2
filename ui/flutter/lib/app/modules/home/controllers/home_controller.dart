@@ -1,5 +1,4 @@
-import 'package:get/get.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeController extends GetxController {
-  var currentIndex = 0.obs;
-}
+
+final currentIndexProvider = StateProvider((ref) => 0);

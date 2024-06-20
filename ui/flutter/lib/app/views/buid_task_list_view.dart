@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path/path.dart' as path;
-import 'package:styled_widget/styled_widget.dart';
 
 import '../../api/api.dart';
 import '../../api/model/meta.dart';
@@ -13,7 +12,7 @@ import '../../util/icons.dart';
 import '../../util/message.dart';
 import '../../util/util.dart';
 import '../modules/app/controllers/app_controller.dart';
-import '../routes/app_pages.dart';
+
 
 class BuildTaskListView extends GetView {
   final List<Task> tasks;
@@ -28,7 +27,7 @@ class BuildTaskListView extends GetView {
     return Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Get.rootDelegate.toNamed(Routes.CREATE);
+            // Get.rootDelegate.toNamed(Routes.CREATE);
           },
           tooltip: 'create'.tr,
           child: const Icon(Icons.add),
@@ -123,8 +122,8 @@ class BuildTaskListView extends GetView {
       if (Util.isDesktop()) {
         FileExplorer.openAndSelectFile(buildExplorerUrl(task));
       } else {
-        Get.rootDelegate
-            .toNamed(Routes.TASK_FILES, parameters: {'id': task.id});
+        // Get.rootDelegate
+        //     .toNamed(Routes.TASK_FILES, parameters: {'id': task.id});
       }
     }
 
@@ -217,7 +216,7 @@ class BuildTaskListView extends GetView {
                         getProgressText(),
                         style: Get.textTheme.bodyLarge
                             ?.copyWith(color: Get.theme.disabledColor),
-                      ).padding(left: 18)),
+                      )),
                   Expanded(
                       flex: 1,
                       child: Row(
@@ -237,7 +236,7 @@ class BuildTaskListView extends GetView {
                     ),
             ],
           ),
-        )).padding(horizontal: 14, top: 8);
+        ));
   }
 
   String fileName(Meta meta) {

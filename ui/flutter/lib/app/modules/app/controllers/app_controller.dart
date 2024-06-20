@@ -5,8 +5,8 @@ import 'dart:ui';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:get/get.dart';
+import 'package:gopeed/app/router/router.dart';
 import 'package:launch_at_startup/launch_at_startup.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tray_manager/tray_manager.dart';
@@ -25,52 +25,25 @@ import '../../../../util/locale_manager.dart';
 import '../../../../util/log_util.dart';
 import '../../../../util/package_info.dart';
 import '../../../../util/util.dart';
-import '../../../routes/app_pages.dart';
+import '../../../platform/mobile/controller/mobile_controller.dart';
 
 const unixSocketPath = 'gopeed.sock';
 
-const allTrackerSubscribeUrls = [
+const trackerSubscribeUrls = [
   'https://github.com/ngosang/trackerslist/raw/master/trackers_all.txt',
-  'https://github.com/ngosang/trackerslist/raw/master/trackers_all_http.txt',
-  'https://github.com/ngosang/trackerslist/raw/master/trackers_all_https.txt',
-  'https://github.com/ngosang/trackerslist/raw/master/trackers_all_ip.txt',
-  'https://github.com/ngosang/trackerslist/raw/master/trackers_all_udp.txt',
-  'https://github.com/ngosang/trackerslist/raw/master/trackers_all_ws.txt',
-  'https://github.com/ngosang/trackerslist/raw/master/trackers_best.txt',
-  'https://github.com/ngosang/trackerslist/raw/master/trackers_best_ip.txt',
   'https://github.com/XIU2/TrackersListCollection/raw/master/all.txt',
-  'https://github.com/XIU2/TrackersListCollection/raw/master/best.txt',
-  'https://github.com/XIU2/TrackersListCollection/raw/master/http.txt',
 ];
-const allTrackerCdns = [
-  // jsdelivr: https://fastly.jsdelivr.net/gh/ngosang/trackerslist/trackers_all.txt
+
+const trackerCdns = [
   ["https://fastly.jsdelivr.net/gh", r".*github.com(/.*)/raw/master(/.*)"],
-  // ghproxy: https://ghproxy.com/https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt
-  [
-    "https://ghproxy.com/https://raw.githubusercontent.com",
-    r".*github.com(/.*)/raw(/.*)"
-  ],
-  // mirror.ghproxy.com: https://mirror.ghproxy.com/https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt
-  [
-    "https://mirror.ghproxy.com/https://raw.githubusercontent.com",
-    r".*github.com(/.*)/raw(/.*)"
-  ],
+  ["https://ghproxy.com/https://raw.githubusercontent.com", r".*github.com(/.*)/raw(/.*)"],
+  ["https://mirror.ghproxy.com/https://raw.githubusercontent.com", r".*github.com(/.*)/raw(/.*)"],
 ];
-final allTrackerSubscribeUrlCdns = Map.fromIterable(allTrackerSubscribeUrls,
-    key: (v) => v as String,
-    value: (v) {
-      final ret = [v as String];
-      for (final cdn in allTrackerCdns) {
-        final reg = RegExp(cdn[1]);
-        final match = reg.firstMatch(v.toString());
-        var matchStr = "";
-        for (var i = 1; i <= match!.groupCount; i++) {
-          matchStr += match.group(i)!;
-        }
-        ret.add("${cdn[0]}$matchStr");
-      }
-      return ret;
-    });
+
+final trackerSubscribeUrlCdns = trackerSubscribeUrls.asMap().map((_, url) => MapEntry(
+  url,
+  [url, ...trackerCdns.map((cdn) => "${cdn[0]}${RegExp(cdn[1]).firstMatch(url)!.group(1)!}")],
+));
 
 class AppController extends GetxController with WindowListener, TrayListener {
   static StartConfig? _defaultStartConfig;
@@ -96,8 +69,10 @@ class AppController extends GetxController with WindowListener, TrayListener {
     _initTray().onError(
         (error, stackTrace) => logger.w("initTray error", error, stackTrace));
 
-    _initForegroundTask().onError((error, stackTrace) =>
-        logger.w("initForegroundTask error", error, stackTrace));
+    if (Util.isMobile()) {
+      MobileController.initForegroundTask().onError((error, stackTrace) =>
+          logger.w("initForegroundTask error", error, stackTrace));
+    }
 
     _initTrackerUpdate().onError((error, stackTrace) =>
         logger.w("initTrackerUpdate error", error, stackTrace));
@@ -110,6 +85,7 @@ class AppController extends GetxController with WindowListener, TrayListener {
   void onClose() {
     _linkSubscription?.cancel();
     trayManager.removeListener(this);
+    Get.delete<AppController>();
   }
 
   @override
@@ -208,7 +184,7 @@ class AppController extends GetxController with WindowListener, TrayListener {
         label: "create".tr,
         onClick: (menuItem) async => {
           await windowManager.show(),
-          await Get.rootDelegate.offAndToNamed(Routes.CREATE),
+          router.go('/create'),
         },
       ),
       MenuItem(
@@ -223,7 +199,7 @@ class AppController extends GetxController with WindowListener, TrayListener {
         label: 'setting'.tr,
         onClick: (menuItem) async => {
           await windowManager.show(),
-          await Get.rootDelegate.offAndToNamed(Routes.SETTING),
+           router.go('/setting'),
         },
       ),
       MenuItem.separator(),
@@ -251,45 +227,7 @@ class AppController extends GetxController with WindowListener, TrayListener {
     trayManager.addListener(this);
   }
 
-  Future<void> _initForegroundTask() async {
-    if (!Util.isMobile()) {
-      return;
-    }
 
-    FlutterForegroundTask.init(
-      androidNotificationOptions: AndroidNotificationOptions(
-          channelId: 'gopeed_service',
-          channelName: 'Gopeed Background Service',
-          channelImportance: NotificationChannelImportance.LOW,
-          showWhen: true,
-          priority: NotificationPriority.LOW,
-          iconData: const NotificationIconData(
-            resType: ResourceType.mipmap,
-            resPrefix: ResourcePrefix.ic,
-            name: 'launcher',
-          )),
-      iosNotificationOptions: const IOSNotificationOptions(
-        showNotification: true,
-        playSound: false,
-      ),
-      foregroundTaskOptions: const ForegroundTaskOptions(
-        interval: 5000,
-        isOnceEvent: false,
-        autoRunOnBoot: true,
-        allowWakeLock: true,
-        allowWifiLock: true,
-      ),
-    );
-
-    if (await FlutterForegroundTask.isRunningService) {
-      FlutterForegroundTask.restartService();
-    } else {
-      FlutterForegroundTask.startService(
-        notificationTitle: "serviceTitle".tr,
-        notificationText: "serviceText".tr,
-      );
-    }
-  }
 
   Future<void> _toCreate(Uri uri) async {
     final path = (uri.scheme == "magnet" ||
@@ -297,7 +235,7 @@ class AppController extends GetxController with WindowListener, TrayListener {
             uri.scheme == "https")
         ? uri.toString()
         : (await toFile(uri.toString())).path;
-    await Get.rootDelegate.offAndToNamed(Routes.CREATE, arguments: path);
+    router.go('/create?path=${path}');
   }
 
   String runningAddress() {
@@ -349,7 +287,7 @@ class AppController extends GetxController with WindowListener, TrayListener {
     final btExtConfig = downloaderConfig.value.extra.bt;
     final result = <String>[];
     for (var u in btExtConfig.trackerSubscribeUrls) {
-      final cdns = allTrackerSubscribeUrlCdns[u];
+      final cdns = trackerSubscribeUrlCdns[u];
       if (cdns == null) {
         continue;
       }
@@ -424,7 +362,7 @@ class AppController extends GetxController with WindowListener, TrayListener {
     }
     if (extra.bt.trackerSubscribeUrls.isEmpty) {
       // default select all tracker subscribe urls
-      extra.bt.trackerSubscribeUrls.addAll(allTrackerSubscribeUrls);
+      extra.bt.trackerSubscribeUrls.addAll(trackerSubscribeUrls);
     }
     final proxy = config.proxy;
     if (proxy.scheme.isEmpty) {

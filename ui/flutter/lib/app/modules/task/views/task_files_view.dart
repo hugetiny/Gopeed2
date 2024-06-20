@@ -14,7 +14,9 @@ import '../../../views/breadcrumb_view.dart';
 import '../controllers/task_files_controller.dart';
 
 class TaskFilesView extends GetView<TaskFilesController> {
-  const TaskFilesView({Key? key}) : super(key: key);
+
+  final String? id;
+  const TaskFilesView({Key? key,this.id}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

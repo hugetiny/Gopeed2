@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:get/get.dart';
 import 'package:window_manager/window_manager.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'api/api.dart' as api;
 import 'app/modules/app/controllers/app_controller.dart';
 import 'app/modules/app/views/app_view.dart';
@@ -36,7 +36,11 @@ void main(List<String> arguments) async {
   await init(args);
   onStart();
 
-  runApp(const AppView());
+  runApp(
+    const ProviderScope(
+      child: AppView(),
+    ),
+  );
 }
 
 Future<void> init(Args args) async {
@@ -73,26 +77,37 @@ Future<void> init(Args args) async {
     logger.e("init package info fail", e);
   }
 
-  final controller = Get.put(AppController());
+  Get.lazyPut(() => AppController());
+  final controller = Get.find<AppController>();
   try {
     await controller.loadStartConfig();
-    final startCfg = controller.startConfig.value;
+    var startCfg = controller.startConfig.value;
     // When the app is closed by swiping on the mobile, the backend server is actually still running, don't need to start again.
-    final isRunning =
+
+    final mobileServiceRunning =
         Util.isMobile() && (await FlutterForegroundTask.isRunningService);
-    if (!isRunning) {
+
+    //DEV ONLY start
+
+    //DEV ONLY end
+    if (mobileServiceRunning) {
+      final lastRunningConfig = Database.instance.getLastRunningConfig()!;
+      api.init(lastRunningConfig.network, lastRunningConfig.address,
+          lastRunningConfig.apiToken);
+    } else {
+      if (kDebugMode) {
+        final lastRunningConfig = Database.instance.getLastRunningConfig()!;
+        startCfg.address = lastRunningConfig.address;
+      }
       controller.runningPort.value =
           await LibgopeedBoot.instance.start(startCfg);
+
       api.init(
           startCfg.network, controller.runningAddress(), startCfg.apiToken);
       Database.instance.saveLastRunningConfig(StartConfigEntity(
           network: startCfg.network,
           address: controller.runningAddress(),
           apiToken: startCfg.apiToken));
-    } else {
-      final lastRunningConfig = Database.instance.getLastRunningConfig()!;
-      api.init(lastRunningConfig.network, lastRunningConfig.address,
-          lastRunningConfig.apiToken);
     }
   } catch (e) {
     logger.e("libgopeed init fail", e);

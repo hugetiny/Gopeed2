@@ -217,14 +217,6 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub/"
     source: hosted
     version: "3.0.3"
-  cupertino_icons:
-    dependency: "direct main"
-    description:
-      name: cupertino_icons
-      sha256: ba631d1c7f7bef6b729a622b7b752645a2d076dba9976925b8f25725a30e1ee6
-      url: "https://mirrors.cloud.tencent.com/dart-pub/"
-    source: hosted
-    version: "1.0.8"
   dart_style:
     dependency: transitive
     description:
@@ -233,6 +225,14 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub/"
     source: hosted
     version: "2.3.6"
+  data_table_2:
+    dependency: "direct main"
+    description:
+      name: data_table_2
+      sha256: f02ec9b24f44420816a87370ff4f4e533e15b274f6267e4c9a88a585ad1a0473
+      url: "https://mirrors.cloud.tencent.com/dart-pub/"
+    source: hosted
+    version: "2.5.15"
   desktop_drop:
     dependency: "direct main"
     description:
@@ -355,6 +355,14 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub/"
     source: hosted
     version: "2.0.20"
+  flutter_riverpod:
+    dependency: "direct main"
+    description:
+      name: flutter_riverpod
+      sha256: "0f1974eff5bbe774bf1d870e406fc6f29e3d6f1c46bd9c58e7172ff68a785d7d"
+      url: "https://mirrors.cloud.tencent.com/dart-pub/"
+    source: hosted
+    version: "2.5.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -397,6 +405,14 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub/"
     source: hosted
     version: "2.1.2"
+  go_router:
+    dependency: "direct main"
+    description:
+      name: go_router
+      sha256: cdae1b9c8bd7efadcef6112e81c903662ef2ce105cbd220a04bbb7c3425b5554
+      url: "https://mirrors.cloud.tencent.com/dart-pub/"
+    source: hosted
+    version: "14.2.0"
   graphs:
     dependency: transitive
     description:
@@ -533,14 +549,6 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub/"
     source: hosted
     version: "0.0.2+8"
-  lint:
-    dependency: transitive
-    description:
-      name: lint
-      sha256: "4a539aa34ec5721a2c7574ae2ca0336738ea4adc2a34887d54b7596310b33c85"
-      url: "https://mirrors.cloud.tencent.com/dart-pub/"
-    source: hosted
-    version: "1.10.0"
   lints:
     dependency: transitive
     description:
@@ -573,14 +581,6 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub/"
     source: hosted
     version: "1.3.0"
-  lottie:
-    dependency: "direct main"
-    description:
-      name: lottie
-      sha256: "893da7a0022ec2fcaa616f34529a081f617e86cc501105b856e5a3184c58c7c2"
-      url: "https://mirrors.cloud.tencent.com/dart-pub/"
-    source: hosted
-    version: "1.4.3"
   macos_secure_bookmarks:
     dependency: "direct main"
     description:
@@ -789,6 +789,14 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub/"
     source: hosted
     version: "4.1.0"
+  riverpod:
+    dependency: transitive
+    description:
+      name: riverpod
+      sha256: f21b32ffd26a36555e501b04f4a5dca43ed59e16343f1a30c13632b2351dfa4d
+      url: "https://mirrors.cloud.tencent.com/dart-pub/"
+    source: hosted
+    version: "2.5.1"
   rounded_loading_button_plus:
     dependency: "direct main"
     description:
@@ -962,6 +970,14 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub/"
     source: hosted
     version: "1.11.1"
+  state_notifier:
+    dependency: transitive
+    description:
+      name: state_notifier
+      sha256: b8677376aa54f2d7c58280d5a007f9e8774f1968d1fb1c096adcb4792fba29bb
+      url: "https://mirrors.cloud.tencent.com/dart-pub/"
+    source: hosted
+    version: "1.0.0"
   stream_channel:
     dependency: transitive
     description:
@@ -986,14 +1002,6 @@ packages:
       url: "https://mirrors.cloud.tencent.com/dart-pub/"
     source: hosted
     version: "1.2.0"
-  styled_widget:
-    dependency: "direct main"
-    description:
-      name: styled_widget
-      sha256: "4d439802919b6ccf10d1488798656da8804633b03012682dd1c8ca70a084aa84"
-      url: "https://mirrors.cloud.tencent.com/dart-pub/"
-    source: hosted
-    version: "0.4.1"
   term_glyph:
     dependency: transitive
     description:

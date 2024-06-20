@@ -4,6 +4,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+import 'package:gopeed/app/router/router.dart';
 import 'package:path/path.dart' as path;
 import 'package:rounded_loading_button_plus/rounded_loading_button.dart';
 
@@ -16,7 +18,6 @@ import '../../../../database/database.dart';
 import '../../../../util/input_formatter.dart';
 import '../../../../util/message.dart';
 import '../../../../util/util.dart';
-import '../../../routes/app_pages.dart';
 import '../../../views/compact_checkbox.dart';
 import '../../../views/directory_selector.dart';
 import '../../../views/file_list_view.dart';
@@ -24,7 +25,7 @@ import '../../app/controllers/app_controller.dart';
 import '../../history/views/history_view.dart';
 import '../controllers/create_controller.dart';
 
-class CreateView extends GetView<CreateController> {
+class CreateView extends StatelessWidget {
   final _confirmFormKey = GlobalKey<FormState>();
 
   final _urlController = TextEditingController();
@@ -38,11 +39,19 @@ class CreateView extends GetView<CreateController> {
   final _btTrackerController = TextEditingController();
 
   final _availableSchemes = ["http:", "https:", "magnet:"];
-
-  CreateView({Key? key}) : super(key: key);
+  final String filePath;
+  late final CreateController controller;
+  CreateView({Key? key,this.filePath= ''}) : super(key: key) {
+    if (Get.isRegistered<CreateController>()) {
+      controller = Get.find<CreateController>();
+    } else {
+      controller = Get.put(CreateController());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+
     final appController = Get.find<AppController>();
 
     if (_connectionsController.text.isEmpty) {
@@ -54,11 +63,10 @@ class CreateView extends GetView<CreateController> {
       _pathController.text = appController.downloaderConfig.value.downloadDir;
     }
 
-    final String? filePath = Get.rootDelegate.arguments();
     if (_urlController.text.isEmpty) {
-      if (filePath?.isNotEmpty ?? false) {
+      if (filePath.isNotEmpty) {
         // get file path from route arguments
-        _urlController.text = filePath!;
+        _urlController.text = filePath;
         _urlController.selection = TextSelection.fromPosition(
             TextPosition(offset: _urlController.text.length));
       } else {
@@ -86,8 +94,8 @@ class CreateView extends GetView<CreateController> {
       appBar: AppBar(
         leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Get.rootDelegate.offNamed(Routes.TASK)),
-        // actions: [],
+            onPressed: () => context.pop(false))
+,        // actions: [],
         title: Text('create'.tr),
       ),
       body: DropTarget(
@@ -423,7 +431,7 @@ class CreateView extends GetView<CreateController> {
                     selectFiles: [],
                     extra: parseReqOptsExtra())));
           }));
-          Get.rootDelegate.offNamed(Routes.TASK);
+          router.go('/');
         } else {
           final rr = await resolve(Request(
             url: submitUrl,
@@ -554,7 +562,7 @@ class CreateView extends GetView<CreateController> {
                                       extra: optExtra)));
                             }
                             Get.back();
-                            Get.rootDelegate.offNamed(Routes.TASK);
+                            router.go('/');
                           }
                         } catch (e) {
                           showErrorMessage(e);
